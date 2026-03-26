@@ -8,6 +8,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/dashboard/agents/intake`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/dashboard/agents/proposal`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/dashboard/agents/report`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/for/law-firms`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
+    { url: `${base}/for/agencies`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
+    { url: `${base}/for/consultants`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
     { url: `${base}/terms`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/privacy`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
   ];
