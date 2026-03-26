@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
             </div>
             <p style="color: #475569; line-height: 1.6;">
               In the meantime, you can explore the dashboard at
-              <a href="https://agentdesk-inky.vercel.app/dashboard" style="color: #2563eb;">agentdesk-inky.vercel.app/dashboard</a>
+              <a href="https://agentdesk.thewedgemethodai.com/dashboard" style="color: #2563eb;">agentdesk.thewedgemethodai.com/dashboard</a>
             </p>
             <p style="color: #94a3b8; font-size: 12px; margin-top: 32px;">
               WEDGE Method LLC &middot; jacob@thewedgemethodai.com

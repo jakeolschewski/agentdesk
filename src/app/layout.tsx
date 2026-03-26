@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://agentdesk-inky.vercel.app"),
+  metadataBase: new URL("https://agentdesk.thewedgemethodai.com"),
   title: "AgentDesk — AI Agents for Professional Services",
   description:
     "Pre-built AI agents that handle client intake, proposals, and reports. Automate 42% of admin work in 5 minutes.",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     title: "AgentDesk — AI Agents for Professional Services",
     description:
       "Pre-built AI agents that handle client intake, proposals, and reports. Automate 42% of admin work in 5 minutes.",
-    url: "https://agentdesk-inky.vercel.app",
+    url: "https://agentdesk.thewedgemethodai.com",
     siteName: "AgentDesk",
     type: "website",
   },
@@ -66,7 +66,7 @@ export default function RootLayout({
               operatingSystem: "Web",
               description:
                 "Pre-built AI agents for consulting firms — automate client intake, proposals, and reports.",
-              url: "https://agentdesk-inky.vercel.app",
+              url: "https://agentdesk.thewedgemethodai.com",
               offers: [
                 {
                   "@type": "Offer",
