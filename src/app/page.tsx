@@ -32,10 +32,10 @@ function Navbar() {
             <a href="#pricing" className="hover:text-slate-900 transition">Pricing</a>
           </div>
           <a
-            href="#waitlist"
+            href="/dashboard"
             className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-violet-600 text-white text-sm font-semibold rounded-lg hover:from-blue-700 hover:to-violet-700 transition shadow-lg shadow-blue-500/25"
           >
-            Get Early Access
+            Try Free
           </a>
         </div>
       </div>
@@ -53,7 +53,7 @@ function Hero() {
       <div className="max-w-5xl mx-auto text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 border border-blue-200/60 rounded-full text-sm font-medium text-blue-700 mb-8">
           <Zap className="w-4 h-4" />
-          Now in private beta — join the waitlist
+          Try all 3 agents free — no signup required
         </div>
         <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6">
           AI agents that run<br />
@@ -66,8 +66,8 @@ function Hero() {
           <span className="font-semibold text-slate-900">Starting at $99/month.</span>
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-          <a href="#waitlist" className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-violet-600 text-white text-lg font-semibold rounded-xl hover:from-blue-700 hover:to-violet-700 transition shadow-xl shadow-blue-500/30 flex items-center gap-2">
-            Get Early Access
+          <a href="/dashboard" className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-violet-600 text-white text-lg font-semibold rounded-xl hover:from-blue-700 hover:to-violet-700 transition shadow-xl shadow-blue-500/30 flex items-center gap-2">
+            Try It Free — No Signup
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </a>
           <a href="#agents" className="px-8 py-4 text-lg font-semibold text-slate-700 hover:text-slate-900 transition flex items-center gap-2">
@@ -212,7 +212,7 @@ function Pricing() {
     <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">Simple, transparent pricing</h2>
-        <p className="text-lg text-slate-600 text-center mb-16 max-w-xl mx-auto">No setup fees. No contracts. Cancel anytime. Every plan includes a 14-day free trial.</p>
+        <p className="text-lg text-slate-600 text-center mb-16 max-w-xl mx-auto">No setup fees. No contracts. Cancel anytime. Try all 3 agents free before you buy.</p>
         <div className="grid md:grid-cols-3 gap-8">
           {plans.map((plan) => (
             <div key={plan.name} className={`rounded-2xl p-8 flex flex-col ${plan.popular ? "bg-gradient-to-b from-blue-600 to-violet-700 text-white shadow-2xl shadow-blue-500/30 scale-105 relative" : "bg-white border border-slate-200 shadow-sm"}`}>
@@ -282,18 +282,25 @@ function Waitlist() {
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-100 rounded-full blur-[120px] opacity-60" />
       </div>
       <div className="max-w-2xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 border border-blue-200/60 rounded-full text-sm font-medium text-blue-700 mb-6">
-          <TrendingUp className="w-4 h-4" />Limited spots — launching Q2 2026
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 border border-emerald-200/60 rounded-full text-sm font-medium text-emerald-700 mb-6">
+          <Zap className="w-4 h-4" />5 free runs — no credit card required
         </div>
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4">Get early access</h2>
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4">See it work in 30 seconds</h2>
         <p className="text-lg text-slate-600 mb-8">
-          Join the waitlist for priority access and{" "}
-          <span className="font-semibold text-slate-900">50% off your first 3 months.</span>
+          Try all 3 agents right now with real data.{" "}
+          <span className="font-semibold text-slate-900">No signup. No credit card. Just results.</span>
         </p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+          <a href="/dashboard" className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-violet-600 text-white text-lg font-semibold rounded-xl hover:from-blue-700 hover:to-violet-700 transition shadow-xl shadow-blue-500/30 flex items-center gap-2">
+            Try the Agents Free
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </a>
+        </div>
+        <p className="text-sm text-slate-500 mb-6">Or get notified about updates and launch discounts:</p>
         <form action="/api/waitlist" method="POST" className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
           <input type="email" name="email" placeholder="you@yourfirm.com" required className="flex-1 px-4 py-3.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400" />
-          <button type="submit" className="px-6 py-3.5 bg-gradient-to-r from-blue-600 to-violet-600 text-white text-sm font-semibold rounded-xl hover:from-blue-700 hover:to-violet-700 transition shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2">
-            <Mail className="w-4 h-4" />Join Waitlist
+          <button type="submit" className="px-6 py-3.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 transition flex items-center justify-center gap-2">
+            <Mail className="w-4 h-4" />Get Updates
           </button>
         </form>
         <p className="text-xs text-slate-400 mt-3">No spam. Unsubscribe anytime.</p>

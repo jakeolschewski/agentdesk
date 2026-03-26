@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -13,8 +13,23 @@ import {
   Zap,
   FileText,
   BarChart3,
+  Sparkles,
+  Lock,
 } from "lucide-react";
 import clsx from "clsx";
+
+const TRIAL_LIMIT = 5;
+
+function getTrialUsed(): number {
+  if (typeof window === "undefined") return 0;
+  return parseInt(localStorage.getItem("agentdesk_trial_used") || "0", 10);
+}
+
+function setTrialUsed(count: number) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("agentdesk_trial_used", String(count));
+  }
+}
 
 const AGENT_META: Record<
   string,
@@ -68,6 +83,90 @@ const AGENT_META: Record<
   },
 };
 
+function UpgradeModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 p-8">
+        <div className="text-center mb-6">
+          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center mx-auto mb-4">
+            <Sparkles className="w-7 h-7 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900">
+            You&apos;ve seen what AgentDesk can do
+          </h2>
+          <p className="text-slate-600 mt-2">
+            Upgrade to run unlimited agents and transform your firm&apos;s
+            workflow.
+          </p>
+        </div>
+
+        <div className="space-y-3 mb-6">
+          {[
+            {
+              name: "Starter",
+              price: "$99/mo",
+              desc: "1 agent, 500 tasks",
+              href: "https://buy.stripe.com/6oUcN55Cz28j2e67ZibEA00",
+            },
+            {
+              name: "Professional",
+              price: "$349/mo",
+              desc: "All 3 agents, 5K tasks",
+              href: "https://buy.stripe.com/14AfZh7KHbIT5qigvObEA01",
+              popular: true,
+            },
+            {
+              name: "Agency",
+              price: "$799/mo",
+              desc: "Unlimited everything",
+              href: "https://buy.stripe.com/6oUeVd8OLcMX8Cu0wQbEA02",
+            },
+          ].map((plan) => (
+            <a
+              key={plan.name}
+              href={plan.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={clsx(
+                "flex items-center justify-between p-4 rounded-xl border transition-all",
+                plan.popular
+                  ? "border-blue-300 bg-blue-50 hover:bg-blue-100 ring-2 ring-blue-200"
+                  : "border-slate-200 hover:border-blue-300 hover:bg-slate-50"
+              )}
+            >
+              <div>
+                <span className="font-semibold text-slate-900">
+                  {plan.name}
+                </span>
+                {plan.popular && (
+                  <span className="ml-2 text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">
+                    Most Popular
+                  </span>
+                )}
+                <p className="text-sm text-slate-500">{plan.desc}</p>
+              </div>
+              <span className="text-lg font-bold text-slate-900">
+                {plan.price}
+              </span>
+            </a>
+          ))}
+        </div>
+
+        <p className="text-center text-xs text-slate-400 mb-4">
+          Cancel anytime. ROI in the first week or your money back.
+        </p>
+
+        <button
+          onClick={onClose}
+          className="w-full text-center text-sm text-slate-500 hover:text-slate-700 py-2"
+        >
+          Maybe later
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function AgentDetailPage() {
   const params = useParams();
   const agentId = params.agentId as string;
@@ -77,9 +176,13 @@ export default function AgentDetailPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [output, setOutput] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [showUpgrade, setShowUpgrade] = useState(false);
+  const [trialUsed, setTrialUsedState] = useState(getTrialUsed);
   const [taskHistory, setTaskHistory] = useState<
     Array<{ input: string; output: string; time: string }>
   >([]);
+
+  const remaining = Math.max(0, TRIAL_LIMIT - trialUsed);
 
   if (!meta) {
     return (
@@ -97,22 +200,38 @@ export default function AgentDetailPage() {
 
   async function runAgent() {
     if (!input.trim()) return;
+
+    if (remaining <= 0) {
+      setShowUpgrade(true);
+      return;
+    }
+
     setIsRunning(true);
     setOutput(null);
 
     try {
-      const res = await fetch(`/api/agents/${agentId}`, {
+      const res = await fetch(`/api/trial/${agentId}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": "demo",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ input }),
       });
+
       const data = await res.json();
+
+      if (res.status === 429) {
+        setShowUpgrade(true);
+        setTrialUsedState(TRIAL_LIMIT);
+        setTrialUsed(TRIAL_LIMIT);
+        return;
+      }
 
       const result = data.task?.output || data.error || "No output";
       setOutput(result);
+
+      const newUsed = data.trial?.used ?? trialUsed + 1;
+      setTrialUsedState(newUsed);
+      setTrialUsed(newUsed);
+
       setTaskHistory((prev) => [
         {
           input: input.slice(0, 100) + (input.length > 100 ? "..." : ""),
@@ -122,7 +241,7 @@ export default function AgentDetailPage() {
         ...prev,
       ]);
     } catch {
-      setOutput("Failed to run agent. Check API configuration.");
+      setOutput("Failed to run agent. Please try again.");
     } finally {
       setIsRunning(false);
     }
@@ -145,6 +264,46 @@ export default function AgentDetailPage() {
 
   return (
     <div className="space-y-6">
+      {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}
+
+      {/* Trial Banner */}
+      <div
+        className={clsx(
+          "rounded-xl p-3 flex items-center justify-between",
+          remaining > 2
+            ? "bg-emerald-50 border border-emerald-200"
+            : remaining > 0
+            ? "bg-amber-50 border border-amber-200"
+            : "bg-red-50 border border-red-200"
+        )}
+      >
+        <div className="flex items-center gap-2">
+          {remaining > 0 ? (
+            <Sparkles
+              className={clsx(
+                "w-4 h-4",
+                remaining > 2 ? "text-emerald-600" : "text-amber-600"
+              )}
+            />
+          ) : (
+            <Lock className="w-4 h-4 text-red-600" />
+          )}
+          <p className="text-sm font-medium text-slate-700">
+            {remaining > 0
+              ? `${remaining} free run${remaining !== 1 ? "s" : ""} remaining`
+              : "Free trial complete"}
+          </p>
+        </div>
+        {remaining === 0 && (
+          <button
+            onClick={() => setShowUpgrade(true)}
+            className="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-violet-600 text-white text-xs font-semibold rounded-lg"
+          >
+            Upgrade
+          </button>
+        )}
+      </div>
+
       {/* Header */}
       <div className="flex items-start gap-4">
         <Link
@@ -174,7 +333,7 @@ export default function AgentDetailPage() {
       {/* Examples */}
       <div className="bg-white rounded-xl border border-slate-200 p-6">
         <h2 className="text-sm font-medium text-slate-700 mb-3">
-          Try an example
+          Try an example (or paste your own data below)
         </h2>
         <div className="space-y-2">
           {meta.examples.map((ex, i) => (
@@ -199,13 +358,18 @@ export default function AgentDetailPage() {
           rows={8}
           className="w-full px-4 py-3 rounded-lg border border-slate-300 text-sm placeholder:text-slate-400 resize-y"
         />
-        <div className="flex justify-end mt-3">
+        <div className="flex items-center justify-between mt-3">
+          <p className="text-xs text-slate-400">
+            {remaining > 0
+              ? `${remaining} free run${remaining !== 1 ? "s" : ""} left`
+              : "Upgrade to continue"}
+          </p>
           <button
             onClick={runAgent}
-            disabled={isRunning || !input.trim()}
+            disabled={isRunning || !input.trim() || remaining <= 0}
             className={clsx(
               "flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium text-white transition-colors",
-              isRunning
+              isRunning || remaining <= 0
                 ? "bg-slate-400 cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700"
             )}
@@ -214,9 +378,13 @@ export default function AgentDetailPage() {
               <>
                 <Loader2 size={16} className="animate-spin" /> Running...
               </>
-            ) : (
+            ) : remaining > 0 ? (
               <>
                 <Play size={16} /> Run Agent
+              </>
+            ) : (
+              <>
+                <Lock size={16} /> Upgrade to Run
               </>
             )}
           </button>
@@ -250,6 +418,29 @@ export default function AgentDetailPage() {
               {output}
             </pre>
           </div>
+
+          {/* Post-output upgrade nudge */}
+          {remaining <= 2 && remaining > 0 && (
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-blue-900">
+                  Like what you see?
+                </p>
+                <p className="text-xs text-blue-700">
+                  {remaining} run{remaining !== 1 ? "s" : ""} left. Upgrade for
+                  unlimited access.
+                </p>
+              </div>
+              <a
+                href="https://buy.stripe.com/14AfZh7KHbIT5qigvObEA01"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition"
+              >
+                Upgrade — $349/mo
+              </a>
+            </div>
+          )}
         </div>
       )}
 

@@ -3,104 +3,164 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
-  Bot,
   Zap,
   FileText,
   BarChart3,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
   ArrowRight,
   Play,
-  TrendingUp,
+  Sparkles,
+  Lock,
 } from "lucide-react";
 import clsx from "clsx";
 
-interface QuickTask {
-  agentId: string;
-  input: string;
+const TRIAL_LIMIT = 5;
+
+function getTrialUsed(): number {
+  if (typeof window === "undefined") return 0;
+  return parseInt(localStorage.getItem("agentdesk_trial_used") || "0", 10);
+}
+
+function setTrialUsed(count: number) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("agentdesk_trial_used", String(count));
+  }
 }
 
 const AGENT_CARDS = [
   {
     id: "intake",
     name: "Intake Agent",
-    description: "Qualify leads and draft responses",
+    description: "Paste an email or inquiry — get a qualified lead score + draft response in seconds",
     icon: Zap,
     color: "blue",
-    stats: { today: 0, total: 0 },
+    cta: "Try with a sample email",
   },
   {
     id: "proposal",
     name: "Proposal Agent",
-    description: "Generate client proposals",
+    description: "Paste call notes — get a complete proposal with scope, timeline, and pricing",
     icon: FileText,
     color: "purple",
-    stats: { today: 0, total: 0 },
+    cta: "Generate a sample proposal",
   },
   {
     id: "report",
     name: "Report Agent",
-    description: "Create project reports",
+    description: "Paste project data — get an executive-ready report your clients will love",
     icon: BarChart3,
     color: "green",
-    stats: { today: 0, total: 0 },
+    cta: "Create a sample report",
   },
 ];
 
-const RECENT_TASKS = [
-  {
-    id: "demo-1",
-    agent: "Intake Agent",
-    input: "New inquiry from Acme Corp about consulting services",
-    status: "completed" as const,
-    time: "Just now (demo)",
-  },
-  {
-    id: "demo-2",
-    agent: "Proposal Agent",
-    input: "Generate proposal for Smith & Associates website redesign",
-    status: "completed" as const,
-    time: "Just now (demo)",
-  },
-  {
-    id: "demo-3",
-    agent: "Report Agent",
-    input: "Weekly report for Project Alpha — Week 12",
-    status: "completed" as const,
-    time: "Just now (demo)",
-  },
-];
+function UpgradeModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 p-8">
+        <div className="text-center mb-6">
+          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center mx-auto mb-4">
+            <Sparkles className="w-7 h-7 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900">You&apos;ve seen what AgentDesk can do</h2>
+          <p className="text-slate-600 mt-2">
+            Upgrade to run unlimited agents and transform your firm&apos;s workflow.
+          </p>
+        </div>
+
+        <div className="space-y-3 mb-6">
+          {[
+            { name: "Starter", price: "$99/mo", desc: "1 agent, 500 tasks", href: "https://buy.stripe.com/6oUcN55Cz28j2e67ZibEA00" },
+            { name: "Professional", price: "$349/mo", desc: "All 3 agents, 5K tasks", href: "https://buy.stripe.com/14AfZh7KHbIT5qigvObEA01", popular: true },
+            { name: "Agency", price: "$799/mo", desc: "Unlimited everything", href: "https://buy.stripe.com/6oUeVd8OLcMX8Cu0wQbEA02" },
+          ].map((plan) => (
+            <a
+              key={plan.name}
+              href={plan.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={clsx(
+                "flex items-center justify-between p-4 rounded-xl border transition-all",
+                plan.popular
+                  ? "border-blue-300 bg-blue-50 hover:bg-blue-100 ring-2 ring-blue-200"
+                  : "border-slate-200 hover:border-blue-300 hover:bg-slate-50"
+              )}
+            >
+              <div>
+                <span className="font-semibold text-slate-900">{plan.name}</span>
+                {plan.popular && (
+                  <span className="ml-2 text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">
+                    Most Popular
+                  </span>
+                )}
+                <p className="text-sm text-slate-500">{plan.desc}</p>
+              </div>
+              <span className="text-lg font-bold text-slate-900">{plan.price}</span>
+            </a>
+          ))}
+        </div>
+
+        <p className="text-center text-xs text-slate-400 mb-4">
+          Cancel anytime. ROI in the first week or your money back.
+        </p>
+
+        <button
+          onClick={onClose}
+          className="w-full text-center text-sm text-slate-500 hover:text-slate-700 py-2"
+        >
+          Maybe later
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const [quickInput, setQuickInput] = useState("");
   const [selectedAgent, setSelectedAgent] = useState("intake");
   const [isRunning, setIsRunning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const [trialUsed, setTrialUsedState] = useState(getTrialUsed);
+  const [showUpgrade, setShowUpgrade] = useState(false);
+
+  const remaining = Math.max(0, TRIAL_LIMIT - trialUsed);
 
   async function handleQuickRun() {
     if (!quickInput.trim()) return;
+
+    if (remaining <= 0) {
+      setShowUpgrade(true);
+      return;
+    }
+
     setIsRunning(true);
     setResult(null);
 
     try {
-      const res = await fetch(`/api/agents/${selectedAgent}`, {
+      const res = await fetch(`/api/trial/${selectedAgent}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": "demo", // Dashboard sessions use cookie auth in prod
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ input: quickInput }),
       });
+
       const data = await res.json();
+
+      if (res.status === 429) {
+        setShowUpgrade(true);
+        setTrialUsedState(TRIAL_LIMIT);
+        setTrialUsed(TRIAL_LIMIT);
+        return;
+      }
 
       if (data.task?.output) {
         setResult(data.task.output);
+        const newUsed = data.trial?.used ?? trialUsed + 1;
+        setTrialUsedState(newUsed);
+        setTrialUsed(newUsed);
       } else {
         setResult(data.error || "Agent returned no output");
       }
     } catch {
-      setResult("Failed to connect to agent. Check your API key.");
+      setResult("Failed to connect to agent. Please try again.");
     } finally {
       setIsRunning(false);
     }
@@ -108,56 +168,52 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-        <p className="text-slate-500 mt-1">
-          Your AI agents are ready. Run tasks, review output, and manage your
-          firm.
-        </p>
-      </div>
+      {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}
 
-      {/* Stats row */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        {[
-          {
-            label: "Tasks Today",
-            value: "0",
-            icon: Clock,
-            color: "text-blue-600",
-          },
-          {
-            label: "Tasks This Week",
-            value: "0",
-            icon: TrendingUp,
-            color: "text-purple-600",
-          },
-          {
-            label: "Completed",
-            value: "0",
-            icon: CheckCircle2,
-            color: "text-green-600",
-          },
-          {
-            label: "Needs Review",
-            value: "0",
-            icon: AlertCircle,
-            color: "text-amber-600",
-          },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="bg-white rounded-xl border border-slate-200 p-5"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-500">{stat.label}</span>
-              <stat.icon size={18} className={stat.color} />
-            </div>
-            <p className="text-2xl font-bold text-slate-900 mt-2">
-              {stat.value}
+      {/* Trial Banner */}
+      <div className={clsx(
+        "rounded-xl p-4 flex items-center justify-between",
+        remaining > 2
+          ? "bg-emerald-50 border border-emerald-200"
+          : remaining > 0
+          ? "bg-amber-50 border border-amber-200"
+          : "bg-red-50 border border-red-200"
+      )}>
+        <div className="flex items-center gap-3">
+          {remaining > 0 ? (
+            <Sparkles className={clsx("w-5 h-5", remaining > 2 ? "text-emerald-600" : "text-amber-600")} />
+          ) : (
+            <Lock className="w-5 h-5 text-red-600" />
+          )}
+          <div>
+            <p className="text-sm font-semibold text-slate-900">
+              {remaining > 0
+                ? `Free Trial: ${remaining} of ${TRIAL_LIMIT} runs remaining`
+                : "Free trial complete"}
+            </p>
+            <p className="text-xs text-slate-500">
+              {remaining > 0
+                ? "Try any agent with your real data — no signup required"
+                : "Upgrade to keep using AgentDesk"}
             </p>
           </div>
-        ))}
+        </div>
+        {remaining <= 2 && (
+          <button
+            onClick={() => setShowUpgrade(true)}
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-violet-600 text-white text-sm font-semibold rounded-lg hover:from-blue-700 hover:to-violet-700 transition"
+          >
+            Upgrade
+          </button>
+        )}
+      </div>
+
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900">Try AgentDesk</h1>
+        <p className="text-slate-500 mt-1">
+          Pick an agent, paste your real data, and see the output in seconds. No signup needed.
+        </p>
       </div>
 
       {/* Quick Run */}
@@ -190,11 +246,13 @@ export default function DashboardPage() {
               "flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium text-white transition-colors",
               isRunning
                 ? "bg-slate-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
+                : remaining > 0
+                ? "bg-blue-600 hover:bg-blue-700"
+                : "bg-slate-400"
             )}
           >
             <Play size={16} />
-            {isRunning ? "Running..." : "Run"}
+            {isRunning ? "Running..." : remaining > 0 ? "Run" : "Upgrade to Run"}
           </button>
         </div>
 
@@ -213,7 +271,7 @@ export default function DashboardPage() {
       {/* Agent Cards */}
       <div>
         <h2 className="text-lg font-semibold text-slate-900 mb-4">
-          Your Agents
+          Choose an Agent
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {AGENT_CARDS.map((agent) => (
@@ -242,77 +300,35 @@ export default function DashboardPage() {
                 {agent.name}
               </h3>
               <p className="text-sm text-slate-500 mt-1">{agent.description}</p>
-              <div className="flex gap-4 mt-4 pt-4 border-t border-slate-100">
-                <div>
-                  <p className="text-xs text-slate-400">Today</p>
-                  <p className="text-sm font-semibold text-slate-700">
-                    {agent.stats.today}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400">Total</p>
-                  <p className="text-sm font-semibold text-slate-700">
-                    {agent.stats.total}
-                  </p>
-                </div>
+              <div className="mt-4 pt-4 border-t border-slate-100">
+                <span className="text-sm font-medium text-blue-600 group-hover:text-blue-700">
+                  {agent.cta} &rarr;
+                </span>
               </div>
             </Link>
           ))}
         </div>
       </div>
 
-      {/* Recent Activity */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h2 className="text-lg font-semibold text-slate-900 mb-4">
-          Recent Activity
-        </h2>
-        <div className="space-y-3">
-          {RECENT_TASKS.map((task) => (
-            <div
-              key={task.id}
-              className="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-50"
-            >
-              <CheckCircle2 size={18} className="text-green-500 shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-700 truncate">
-                  {task.input}
-                </p>
-                <p className="text-xs text-slate-400">
-                  {task.agent} &middot; {task.time}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* API Key section */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h2 className="text-lg font-semibold text-slate-900 mb-2">
-          API Access
-        </h2>
-        <p className="text-sm text-slate-500 mb-4">
-          Use these endpoints to integrate agents into your existing workflow.
-        </p>
-        <div className="bg-slate-900 rounded-lg p-4 font-mono text-sm text-slate-300 space-y-2 overflow-x-auto">
-          <p className="text-slate-500"># List agents</p>
-          <p>
-            curl https://agentdesk.thewedgemethodai.com/api/agents
-          </p>
-          <p className="text-slate-500 mt-3"># Run the intake agent</p>
-          <p>
-            curl -X POST
-            https://agentdesk.thewedgemethodai.com/api/agents/intake \
-          </p>
-          <p>
-            {"  "}-H &quot;x-api-key: YOUR_KEY&quot; \
-          </p>
-          <p>
-            {"  "}-H &quot;Content-Type: application/json&quot; \
-          </p>
-          <p>
-            {"  "}-d {"'{\"input\": \"New email from prospect...\"}'"}
-          </p>
+      {/* How it works for trial users */}
+      <div className="bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl border border-slate-200 p-6">
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">How the trial works</h2>
+        <div className="grid sm:grid-cols-3 gap-6">
+          <div>
+            <div className="text-2xl font-extrabold text-blue-600 mb-1">1</div>
+            <p className="text-sm font-medium text-slate-900">Pick an agent</p>
+            <p className="text-xs text-slate-500">Intake, Proposal, or Report — each solves a different problem</p>
+          </div>
+          <div>
+            <div className="text-2xl font-extrabold text-blue-600 mb-1">2</div>
+            <p className="text-sm font-medium text-slate-900">Paste your real data</p>
+            <p className="text-xs text-slate-500">Emails, call notes, or project metrics — the more real, the better</p>
+          </div>
+          <div>
+            <div className="text-2xl font-extrabold text-blue-600 mb-1">3</div>
+            <p className="text-sm font-medium text-slate-900">Get results in seconds</p>
+            <p className="text-xs text-slate-500">Copy the output and use it. If it saves you time, upgrade</p>
+          </div>
         </div>
       </div>
     </div>
