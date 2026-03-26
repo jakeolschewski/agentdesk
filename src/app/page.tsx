@@ -313,7 +313,11 @@ function Footer() {
           <span className="font-bold text-sm">AgentDesk</span>
           <span className="text-xs text-slate-400">by WEDGE Method LLC</span>
         </div>
-        <div className="text-xs text-slate-400">&copy; {new Date().getFullYear()} WEDGE Method LLC. All rights reserved. jacob@thewedgemethodai.com</div>
+        <div className="flex items-center gap-4 text-xs text-slate-400">
+          <a href="/terms" className="hover:text-slate-600 transition">Terms of Service</a>
+          <a href="/privacy" className="hover:text-slate-600 transition">Privacy Policy</a>
+          <span>&copy; {new Date().getFullYear()} WEDGE Method LLC. All rights reserved.</span>
+        </div>
       </div>
     </footer>
   );
