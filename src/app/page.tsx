@@ -31,6 +31,7 @@ function Navbar() {
             <a href="#agents" className="hover:text-slate-900 transition">Agents</a>
             <a href="#how-it-works" className="hover:text-slate-900 transition">How It Works</a>
             <a href="#pricing" className="hover:text-slate-900 transition">Pricing</a>
+            <a href="#faq" className="hover:text-slate-900 transition">FAQ</a>
           </div>
           <a
             href="/dashboard"
@@ -369,6 +370,59 @@ function Waitlist() {
   );
 }
 
+const faqItems = [
+  {
+    q: "Do I need to sign up to try AgentDesk?",
+    a: "No. You get 5 free runs with no signup, no credit card, and no commitment. Just pick an agent, paste your data, and see the output in seconds.",
+  },
+  {
+    q: "What kind of data do I paste into the agents?",
+    a: "The Intake Agent takes incoming emails or form submissions. The Proposal Agent takes discovery call notes or meeting transcripts. The Report Agent takes project metrics, milestones, and status updates.",
+  },
+  {
+    q: "How is this different from ChatGPT?",
+    a: "ChatGPT is a general-purpose chatbot. AgentDesk agents are purpose-built for consulting workflows — they produce structured, professional output (proposals with scope, timeline, pricing) in a consistent format every time. No prompt engineering required.",
+  },
+  {
+    q: "Is my data secure?",
+    a: "Yes. Your data is processed via the Anthropic API (Claude) and is not used for model training. We don't store your input or output data beyond the current session. All connections are encrypted via TLS.",
+  },
+  {
+    q: "Can I cancel anytime?",
+    a: "Absolutely. All plans are month-to-month with no contracts and no cancellation fees. Cancel from your Stripe billing portal in one click.",
+  },
+  {
+    q: "How long does it take to get results?",
+    a: "Most agent runs complete in 15-30 seconds. The Proposal Agent, which generates the most detailed output (scope, timeline, pricing, case studies), typically takes 20-30 seconds.",
+  },
+  {
+    q: "What if the output isn't perfect?",
+    a: "The agents produce a strong first draft — typically 80-90% ready to send. Most users review and make minor tweaks before sending to clients. This still saves 3-4 hours per proposal compared to writing from scratch.",
+  },
+];
+
+function FAQ() {
+  return (
+    <section id="faq" className="py-24 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">Frequently asked questions</h2>
+        <p className="text-lg text-slate-600 text-center mb-12">Everything you need to know before getting started.</p>
+        <div className="space-y-4">
+          {faqItems.map((item) => (
+            <details key={item.q} className="group bg-white rounded-xl border border-slate-200 overflow-hidden">
+              <summary className="flex items-center justify-between p-5 cursor-pointer text-left font-semibold text-slate-900 hover:bg-slate-50 transition [&::-webkit-details-marker]:hidden">
+                {item.q}
+                <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 group-open:rotate-90 transition-transform" />
+              </summary>
+              <div className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{item.a}</div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   return (
     <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-slate-200/60">
@@ -402,6 +456,7 @@ export default function Home() {
         <Comparison />
         <HowItWorks />
         <Pricing />
+        <FAQ />
         <Waitlist />
       </main>
       <Footer />

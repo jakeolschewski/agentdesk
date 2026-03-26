@@ -101,6 +101,57 @@ export default function RootLayout({
             }),
           }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: "Do I need to sign up to try AgentDesk?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "No. You get 5 free runs with no signup, no credit card, and no commitment. Just pick an agent, paste your data, and see the output in seconds.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "How is AgentDesk different from ChatGPT?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "ChatGPT is a general-purpose chatbot. AgentDesk agents are purpose-built for consulting workflows — they produce structured, professional output (proposals with scope, timeline, pricing) in a consistent format every time. No prompt engineering required.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "Is my data secure?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Yes. Your data is processed via the Anthropic API (Claude) and is not used for model training. We don't store your input or output data beyond the current session. All connections are encrypted via TLS.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "Can I cancel anytime?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Absolutely. All plans are month-to-month with no contracts and no cancellation fees. Cancel from your Stripe billing portal in one click.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "How long does it take to get results?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Most agent runs complete in 15-30 seconds. The Proposal Agent, which generates the most detailed output, typically takes 20-30 seconds.",
+                  },
+                },
+              ],
+            }),
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col bg-white text-slate-900">
         {children}

@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://agentdesk-inky.vercel.app/sitemap.xml
+Sitemap: https://agentdesk.thewedgemethodai.com/sitemap.xml
