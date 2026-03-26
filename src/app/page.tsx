@@ -204,9 +204,9 @@ function HowItWorks() {
 
 function Pricing() {
   const plans = [
-    { name: "Starter", price: "$99", desc: "One agent for solo consultants", features: ["1 AI agent", "500 tasks/month", "Email support", "Basic dashboard", "7-day activity history"], cta: "Start with Starter", popular: false },
-    { name: "Professional", price: "$349", desc: "All 3 agents for growing firms", features: ["All 3 AI agents", "5,000 tasks/month", "Priority support", "Advanced dashboard", "30-day activity history", "Custom agent training", "API access"], cta: "Go Professional", popular: true },
-    { name: "Agency", price: "$799", desc: "Unlimited for large teams", features: ["Unlimited agents", "Unlimited tasks", "Dedicated support", "White-label option", "90-day activity history", "Custom integrations", "Team management", "SLA guarantee"], cta: "Contact Sales", popular: false },
+    { name: "Starter", price: "$99", desc: "One agent for solo consultants", features: ["1 AI agent", "500 tasks/month", "Email support", "Basic dashboard", "7-day activity history"], cta: "Start with Starter", href: "https://buy.stripe.com/6oUcN55Cz28j2e67ZibEA00", popular: false },
+    { name: "Professional", price: "$349", desc: "All 3 agents for growing firms", features: ["All 3 AI agents", "5,000 tasks/month", "Priority support", "Advanced dashboard", "30-day activity history", "Custom agent training", "API access"], cta: "Go Professional", href: "https://buy.stripe.com/14AfZh7KHbIT5qigvObEA01", popular: true },
+    { name: "Agency", price: "$799", desc: "Unlimited for large teams", features: ["Unlimited agents", "Unlimited tasks", "Dedicated support", "White-label option", "90-day activity history", "Custom integrations", "Team management", "SLA guarantee"], cta: "Contact Sales", href: "https://buy.stripe.com/6oUeVd8OLcMX8Cu0wQbEA02", popular: false },
   ];
   return (
     <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8">
@@ -234,7 +234,7 @@ function Pricing() {
                   </li>
                 ))}
               </ul>
-              <a href="#waitlist" className={`block text-center py-3 px-6 rounded-xl font-semibold text-sm transition ${plan.popular ? "bg-white text-blue-700 hover:bg-blue-50" : "bg-slate-900 text-white hover:bg-slate-800"}`}>{plan.cta}</a>
+              <a href={plan.href} target="_blank" rel="noopener noreferrer" className={`block text-center py-3 px-6 rounded-xl font-semibold text-sm transition ${plan.popular ? "bg-white text-blue-700 hover:bg-blue-50" : "bg-slate-900 text-white hover:bg-slate-800"}`}>{plan.cta}</a>
             </div>
           ))}
         </div>
