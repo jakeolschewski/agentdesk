@@ -20,6 +20,7 @@ import {
   Share2,
 } from "lucide-react";
 import clsx from "clsx";
+import { trackEvent } from "@/lib/analytics";
 
 const TRIAL_LIMIT = 5;
 
@@ -252,6 +253,7 @@ export default function AgentDetailPage() {
         setShowUpgrade(true);
         setTrialUsedState(TRIAL_LIMIT);
         setTrialUsed(TRIAL_LIMIT);
+        trackEvent("trial_limit_reached", { agent: agentId });
         return;
       }
 
@@ -261,6 +263,8 @@ export default function AgentDetailPage() {
       const newUsed = data.trial?.used ?? trialUsed + 1;
       setTrialUsedState(newUsed);
       setTrialUsed(newUsed);
+
+      trackEvent("trial_run", { agent: agentId, runs_used: newUsed, remaining: TRIAL_LIMIT - newUsed });
 
       // Show email capture after first successful run (if not already captured)
       if (newUsed === 1 && !emailSubmitted) {
@@ -316,6 +320,7 @@ export default function AgentDetailPage() {
       setEmailSubmitted(true);
       setShowEmailCapture(false);
       localStorage.setItem("agentdesk_email_captured", "true");
+      trackEvent("email_capture", { agent: agentId });
     } catch {
       // Silently fail — don't block the user experience
     } finally {

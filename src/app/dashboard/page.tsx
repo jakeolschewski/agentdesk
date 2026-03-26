@@ -12,6 +12,7 @@ import {
   Lock,
 } from "lucide-react";
 import clsx from "clsx";
+import { trackEvent } from "@/lib/analytics";
 
 const TRIAL_LIMIT = 5;
 
@@ -156,6 +157,7 @@ export default function DashboardPage() {
         const newUsed = data.trial?.used ?? trialUsed + 1;
         setTrialUsedState(newUsed);
         setTrialUsed(newUsed);
+        trackEvent("trial_run", { agent: selectedAgent, runs_used: newUsed, source: "quick_run" });
       } else {
         setResult(data.error || "Agent returned no output");
       }
