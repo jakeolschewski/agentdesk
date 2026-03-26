@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Mail,
 } from "lucide-react";
+import HeroDemo from "@/components/hero-demo";
 
 function Navbar() {
   return (
@@ -79,6 +80,7 @@ function Hero() {
           <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-blue-500" />Setup in under 5 minutes</div>
           <div className="flex items-center gap-2"><Users className="w-4 h-4 text-violet-500" />Built for professional services</div>
         </div>
+        <HeroDemo />
       </div>
     </section>
   );
