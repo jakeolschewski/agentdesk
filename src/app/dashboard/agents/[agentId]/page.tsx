@@ -190,6 +190,7 @@ export default function AgentDetailPage() {
   const [taskHistory, setTaskHistory] = useState<
     Array<{ input: string; output: string; time: string }>
   >([]);
+  const [progressStage, setProgressStage] = useState(0);
 
   const remaining = Math.max(0, TRIAL_LIMIT - trialUsed);
 
@@ -217,6 +218,25 @@ export default function AgentDetailPage() {
 
     setIsRunning(true);
     setOutput(null);
+    setProgressStage(0);
+
+    // Animate progress stages while waiting
+    const stages = [
+      "Reading your input...",
+      "Analyzing context and requirements...",
+      agentId === "intake" ? "Scoring lead quality..." :
+      agentId === "proposal" ? "Structuring proposal sections..." :
+      "Compiling report data...",
+      agentId === "intake" ? "Drafting personalized response..." :
+      agentId === "proposal" ? "Writing executive summary and scope..." :
+      "Generating executive summary...",
+      "Formatting final output...",
+    ];
+    let stage = 0;
+    const progressInterval = setInterval(() => {
+      stage = Math.min(stage + 1, stages.length - 1);
+      setProgressStage(stage);
+    }, 4000);
 
     try {
       const res = await fetch(`/api/trial/${agentId}`, {
@@ -257,9 +277,22 @@ export default function AgentDetailPage() {
     } catch {
       setOutput("Failed to run agent. Please try again.");
     } finally {
+      clearInterval(progressInterval);
       setIsRunning(false);
     }
   }
+
+  const PROGRESS_MESSAGES = [
+    "Reading your input...",
+    "Analyzing context and requirements...",
+    agentId === "intake" ? "Scoring lead quality..." :
+    agentId === "proposal" ? "Structuring proposal sections..." :
+    "Compiling report data...",
+    agentId === "intake" ? "Drafting personalized response..." :
+    agentId === "proposal" ? "Writing executive summary and scope..." :
+    "Generating executive summary...",
+    "Formatting final output...",
+  ];
 
   function handleCopy() {
     if (output) {
@@ -424,6 +457,46 @@ export default function AgentDetailPage() {
           </button>
         </div>
       </div>
+
+      {/* Progress Indicator */}
+      {isRunning && (
+        <div className="bg-white rounded-xl border border-blue-200 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Loader2 size={20} className="animate-spin text-blue-600" />
+            <h2 className="text-sm font-semibold text-blue-700">Agent is working...</h2>
+          </div>
+          <div className="space-y-2">
+            {PROGRESS_MESSAGES.map((msg, i) => (
+              <div
+                key={msg}
+                className={clsx(
+                  "flex items-center gap-2 text-sm transition-all duration-500",
+                  i < progressStage
+                    ? "text-slate-400"
+                    : i === progressStage
+                    ? "text-blue-700 font-medium"
+                    : "text-slate-300"
+                )}
+              >
+                {i < progressStage ? (
+                  <CheckCircle2 size={14} className="text-green-500 shrink-0" />
+                ) : i === progressStage ? (
+                  <Loader2 size={14} className="animate-spin text-blue-600 shrink-0" />
+                ) : (
+                  <div className="w-3.5 h-3.5 rounded-full border border-slate-200 shrink-0" />
+                )}
+                {msg}
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+            <div
+              className="bg-gradient-to-r from-blue-500 to-violet-500 h-full rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${Math.min(95, (progressStage + 1) * 20)}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Output */}
       {output && (
