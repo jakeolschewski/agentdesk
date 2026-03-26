@@ -13,9 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AgentDesk — AI Agents That Run Your Firm",
+  metadataBase: new URL("https://agentdesk-inky.vercel.app"),
+  title: "AgentDesk — AI Agents for Professional Services",
   description:
-    "Pre-built AI agents for professional services. Client intake, proposals, and reports — automated in 5 minutes. Starting at $99/month.",
+    "Pre-built AI agents that handle client intake, proposals, and reports. Automate 42% of admin work in 5 minutes.",
   keywords: [
     "AI agents",
     "professional services automation",
@@ -26,10 +27,18 @@ export const metadata: Metadata = {
     "proposal automation",
   ],
   openGraph: {
-    title: "AgentDesk — AI Agents That Run Your Firm",
+    title: "AgentDesk — AI Agents for Professional Services",
     description:
-      "Pre-built AI agents for professional services. Works in 5 minutes. $99/month. No coding.",
+      "Pre-built AI agents that handle client intake, proposals, and reports. Automate 42% of admin work in 5 minutes.",
+    url: "https://agentdesk-inky.vercel.app",
+    siteName: "AgentDesk",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AgentDesk — AI Agents for Professional Services",
+    description:
+      "Pre-built AI agents that handle client intake, proposals, and reports. Automate 42% of admin work in 5 minutes.",
   },
 };
 
