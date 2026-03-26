@@ -27,7 +27,13 @@ export const metadata: Metadata = {
     "AI for agencies",
     "client intake automation",
     "proposal automation",
+    "AI proposal generator",
+    "consulting firm AI",
+    "automated client intake",
   ],
+  alternates: {
+    canonical: "https://agentdesk.thewedgemethodai.com",
+  },
   openGraph: {
     title: "AgentDesk — AI Agents for Professional Services",
     description:
@@ -41,6 +47,17 @@ export const metadata: Metadata = {
     title: "AgentDesk — AI Agents for Professional Services",
     description:
       "Pre-built AI agents that handle client intake, proposals, and reports. Automate 42% of admin work in 5 minutes.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 

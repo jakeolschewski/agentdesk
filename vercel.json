@@ -1,0 +1,15 @@
+{
+  "redirects": [
+    {
+      "source": "/:path(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "agentdesk-inky.vercel.app"
+        }
+      ],
+      "destination": "https://agentdesk.thewedgemethodai.com/:path",
+      "permanent": true
+    }
+  ]
+}
