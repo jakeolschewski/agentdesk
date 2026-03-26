@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
+import Script from "next/script";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -55,6 +57,16 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-white text-slate-900">
         {children}
       </body>
+
+      {/* Sentry Error Tracking — Browser Loader Script */}
+      <Script
+        src="https://js.sentry-cdn.com/d797d88e64447a5ff95db25b3f1f1df6.min.js"
+        strategy="beforeInteractive"
+        crossOrigin="anonymous"
+      />
+
+      {/* Google Analytics 4 */}
+      <GoogleAnalytics gaId="G-QHEZ9C3FHS" />
     </html>
   );
 }
