@@ -17,6 +17,7 @@ import {
   Lock,
   Mail,
   X,
+  Share2,
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -505,20 +506,37 @@ export default function AgentDetailPage() {
             <h2 className="text-sm font-medium text-slate-700">
               Agent Output
             </h2>
-            <button
-              onClick={handleCopy}
-              className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700"
-            >
-              {copied ? (
-                <>
-                  <CheckCircle2 size={14} /> Copied
-                </>
-              ) : (
-                <>
-                  <Copy size={14} /> Copy
-                </>
-              )}
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleCopy}
+                className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700"
+              >
+                {copied ? (
+                  <>
+                    <CheckCircle2 size={14} /> Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy size={14} /> Copy
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => {
+                  const text = `Check out this ${meta.name} output from AgentDesk — AI agents for professional services:\n\n${output?.slice(0, 280)}...\n\nTry it free: https://agentdesk.thewedgemethodai.com/dashboard/agents/${agentId}`;
+                  if (navigator.share) {
+                    navigator.share({ title: `${meta.name} Output`, text, url: `https://agentdesk.thewedgemethodai.com/dashboard/agents/${agentId}` });
+                  } else {
+                    navigator.clipboard.writeText(text);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }
+                }}
+                className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700"
+              >
+                <Share2 size={14} /> Share
+              </button>
+            </div>
           </div>
           <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
             <pre className="text-sm text-slate-700 whitespace-pre-wrap font-mono leading-relaxed max-h-[600px] overflow-y-auto">
