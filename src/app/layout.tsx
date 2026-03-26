@@ -54,6 +54,54 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              name: "AgentDesk",
+              applicationCategory: "BusinessApplication",
+              operatingSystem: "Web",
+              description:
+                "Pre-built AI agents for consulting firms — automate client intake, proposals, and reports.",
+              url: "https://agentdesk-inky.vercel.app",
+              offers: [
+                {
+                  "@type": "Offer",
+                  name: "Starter",
+                  price: "99.00",
+                  priceCurrency: "USD",
+                  priceValidUntil: "2027-12-31",
+                  url: "https://buy.stripe.com/6oUcN55Cz28j2e67ZibEA00",
+                },
+                {
+                  "@type": "Offer",
+                  name: "Professional",
+                  price: "349.00",
+                  priceCurrency: "USD",
+                  priceValidUntil: "2027-12-31",
+                  url: "https://buy.stripe.com/14AfZh7KHbIT5qigvObEA01",
+                },
+                {
+                  "@type": "Offer",
+                  name: "Agency",
+                  price: "799.00",
+                  priceCurrency: "USD",
+                  priceValidUntil: "2027-12-31",
+                  url: "https://buy.stripe.com/6oUeVd8OLcMX8Cu0wQbEA02",
+                },
+              ],
+              provider: {
+                "@type": "Organization",
+                name: "WEDGE Method LLC",
+                url: "https://thewedgemethodai.com",
+              },
+            }),
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-white text-slate-900">
         {children}
       </body>

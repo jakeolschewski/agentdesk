@@ -79,6 +79,11 @@ export async function POST(req: NextRequest) {
 
     console.log(`[WAITLIST] New signup: ${email} (total: ${waitlist.length})`);
 
+    // Return JSON for fetch calls, redirect for form submissions
+    const acceptsJson = req.headers.get("content-type")?.includes("application/json");
+    if (acceptsJson) {
+      return NextResponse.json({ success: true, message: "You're on the list!" });
+    }
     return NextResponse.redirect(new URL("/?joined=true", req.url));
   } catch {
     return NextResponse.json(

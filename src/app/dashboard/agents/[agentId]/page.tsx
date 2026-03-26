@@ -15,6 +15,8 @@ import {
   BarChart3,
   Sparkles,
   Lock,
+  Mail,
+  X,
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -178,6 +180,13 @@ export default function AgentDetailPage() {
   const [copied, setCopied] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [trialUsed, setTrialUsedState] = useState(getTrialUsed);
+  const [showEmailCapture, setShowEmailCapture] = useState(false);
+  const [emailSubmitted, setEmailSubmitted] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("agentdesk_email_captured") === "true";
+  });
+  const [captureEmail, setCaptureEmail] = useState("");
+  const [emailSending, setEmailSending] = useState(false);
   const [taskHistory, setTaskHistory] = useState<
     Array<{ input: string; output: string; time: string }>
   >([]);
@@ -232,6 +241,11 @@ export default function AgentDetailPage() {
       setTrialUsedState(newUsed);
       setTrialUsed(newUsed);
 
+      // Show email capture after first successful run (if not already captured)
+      if (newUsed === 1 && !emailSubmitted) {
+        setTimeout(() => setShowEmailCapture(true), 2000);
+      }
+
       setTaskHistory((prev) => [
         {
           input: input.slice(0, 100) + (input.length > 100 ? "..." : ""),
@@ -252,6 +266,26 @@ export default function AgentDetailPage() {
       navigator.clipboard.writeText(output);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    }
+  }
+
+  async function handleEmailCapture(e: React.FormEvent) {
+    e.preventDefault();
+    if (!captureEmail.trim()) return;
+    setEmailSending(true);
+    try {
+      await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: captureEmail }),
+      });
+      setEmailSubmitted(true);
+      setShowEmailCapture(false);
+      localStorage.setItem("agentdesk_email_captured", "true");
+    } catch {
+      // Silently fail — don't block the user experience
+    } finally {
+      setEmailSending(false);
     }
   }
 
@@ -441,6 +475,46 @@ export default function AgentDetailPage() {
               </a>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Email Capture — appears after first run */}
+      {showEmailCapture && !emailSubmitted && (
+        <div className="bg-gradient-to-r from-blue-50 to-violet-50 rounded-xl border border-blue-200 p-5 relative">
+          <button
+            onClick={() => setShowEmailCapture(false)}
+            className="absolute top-3 right-3 text-slate-400 hover:text-slate-600"
+          >
+            <X size={16} />
+          </button>
+          <div className="flex items-start gap-3">
+            <Mail className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-slate-900">
+                Want to save your results?
+              </p>
+              <p className="text-xs text-slate-600 mt-1 mb-3">
+                Enter your email to get your agent outputs delivered and unlock launch discounts.
+              </p>
+              <form onSubmit={handleEmailCapture} className="flex gap-2">
+                <input
+                  type="email"
+                  value={captureEmail}
+                  onChange={(e) => setCaptureEmail(e.target.value)}
+                  placeholder="you@yourfirm.com"
+                  required
+                  className="flex-1 px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                />
+                <button
+                  type="submit"
+                  disabled={emailSending}
+                  className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition disabled:bg-slate-400"
+                >
+                  {emailSending ? "..." : "Save"}
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
       )}
 
