@@ -177,6 +177,64 @@ function AgentsSection() {
   );
 }
 
+function LiveDemo() {
+  return (
+    <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4">See it in action</h2>
+          <p className="text-lg text-slate-400 max-w-2xl mx-auto">Paste call notes. Get a complete proposal. 30 seconds.</p>
+        </div>
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Input */}
+          <div className="rounded-xl bg-slate-800 border border-slate-700 p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-3 h-3 rounded-full bg-red-500" />
+              <div className="w-3 h-3 rounded-full bg-yellow-500" />
+              <div className="w-3 h-3 rounded-full bg-green-500" />
+              <span className="ml-2 text-xs text-slate-500">Your call notes</span>
+            </div>
+            <p className="text-sm text-slate-300 font-mono leading-relaxed">
+              Discovery call with Martinez & Associates. 15-person law firm. Spending 8hrs/week on manual document review. Want AI-powered solution. Budget: $8-12K. Decision maker: Managing Partner Elena Martinez. Need pilot by June.
+            </p>
+          </div>
+          {/* Output */}
+          <div className="rounded-xl bg-slate-800 border border-blue-500/30 p-6 relative">
+            <div className="absolute -top-3 left-4 px-3 py-1 bg-blue-600 rounded-full text-xs font-semibold">
+              Proposal Agent output
+            </div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-3 h-3 rounded-full bg-red-500" />
+              <div className="w-3 h-3 rounded-full bg-yellow-500" />
+              <div className="w-3 h-3 rounded-full bg-green-500" />
+              <span className="ml-2 text-xs text-slate-500">Generated in 28s</span>
+            </div>
+            <div className="text-sm text-slate-300 font-mono leading-relaxed space-y-2">
+              <p className="text-blue-400 font-bold">## Executive Summary</p>
+              <p>AI-powered document review system for Martinez & Associates to reduce 8hrs/week of manual review...</p>
+              <p className="text-blue-400 font-bold">## Scope of Work</p>
+              <p>Phase 1: Document analysis pipeline<br />Phase 2: Attorney review dashboard<br />Phase 3: Integration with case mgmt...</p>
+              <p className="text-blue-400 font-bold">## Investment</p>
+              <p>$10,500 — includes setup, training, 90-day support</p>
+              <p className="text-slate-500 text-xs mt-2">+ timeline, case studies, next steps...</p>
+            </div>
+          </div>
+        </div>
+        <div className="text-center mt-8">
+          <a
+            href="/dashboard/agents/proposal"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-blue-700 transition"
+          >
+            Try it with your call notes
+            <ArrowRight className="w-5 h-5" />
+          </a>
+          <p className="text-sm text-slate-500 mt-3">Free — no signup required</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function HowItWorks() {
   const steps = [
     { num: "01", title: "Connect your tools", desc: "Link your email, calendar, and project tools. Takes under 2 minutes." },
@@ -338,6 +396,7 @@ export default function Home() {
         <Hero />
         <PainPoints />
         <AgentsSection />
+        <LiveDemo />
         <Comparison />
         <HowItWorks />
         <Pricing />
