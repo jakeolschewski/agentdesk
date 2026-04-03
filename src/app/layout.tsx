@@ -16,9 +16,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://agentdesk.thewedgemethodai.com"),
-  title: "AgentDesk — AI Agents for Professional Services",
+  title:
+    "AgentDesk — AI Agents for Professional Services | WEDGE Method",
   description:
-    "Pre-built AI agents that handle client intake, proposals, and reports. Automate 42% of admin work in 5 minutes.",
+    "Pre-built AI agents that automate client intake, proposals, and reports for consultants, agencies, and law firms. Starting at $99/month. Try free — no signup required.",
   keywords: [
     "AI agents",
     "professional services automation",
@@ -35,18 +36,20 @@ export const metadata: Metadata = {
     canonical: "https://agentdesk.thewedgemethodai.com",
   },
   openGraph: {
-    title: "AgentDesk — AI Agents for Professional Services",
+    title:
+      "AgentDesk — AI Agents for Professional Services | WEDGE Method",
     description:
-      "Pre-built AI agents that handle client intake, proposals, and reports. Automate 42% of admin work in 5 minutes.",
+      "Pre-built AI agents that automate client intake, proposals, and reports for consultants, agencies, and law firms. Starting at $99/month. Try free — no signup required.",
     url: "https://agentdesk.thewedgemethodai.com",
     siteName: "AgentDesk",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AgentDesk — AI Agents for Professional Services",
+    title:
+      "AgentDesk — AI Agents for Professional Services | WEDGE Method",
     description:
-      "Pre-built AI agents that handle client intake, proposals, and reports. Automate 42% of admin work in 5 minutes.",
+      "Pre-built AI agents that automate client intake, proposals, and reports for consultants, agencies, and law firms. Starting at $99/month. Try free — no signup required.",
   },
   robots: {
     index: true,
@@ -115,57 +118,6 @@ export default function RootLayout({
                 name: "WEDGE Method LLC",
                 url: "https://thewedgemethodai.com",
               },
-            }),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              mainEntity: [
-                {
-                  "@type": "Question",
-                  name: "Do I need to sign up to try AgentDesk?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "No. You get 5 free runs with no signup, no credit card, and no commitment. Just pick an agent, paste your data, and see the output in seconds.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "How is AgentDesk different from ChatGPT?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "ChatGPT is a general-purpose chatbot. AgentDesk agents are purpose-built for consulting workflows — they produce structured, professional output (proposals with scope, timeline, pricing) in a consistent format every time. No prompt engineering required.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "Is my data secure?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Yes. Your data is processed via the Anthropic API (Claude) and is not used for model training. We don't store your input or output data beyond the current session. All connections are encrypted via TLS.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "Can I cancel anytime?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Absolutely. All plans are month-to-month with no contracts and no cancellation fees. Cancel from your Stripe billing portal in one click.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "How long does it take to get results?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Most agent runs complete in 15-30 seconds. The Proposal Agent, which generates the most detailed output, typically takes 20-30 seconds.",
-                  },
-                },
-              ],
             }),
           }}
         />

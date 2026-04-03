@@ -8,13 +8,12 @@ import {
   BarChart3,
   CheckCircle2,
   ArrowRight,
-  Star,
   Users,
-  TrendingUp,
   ChevronRight,
-  Mail,
 } from "lucide-react";
 import HeroDemo from "@/components/hero-demo";
+import PricingSection from "@/components/pricing-section";
+import WaitlistForm from "@/components/waitlist-form";
 
 function Navbar() {
   return (
@@ -263,46 +262,6 @@ function HowItWorks() {
   );
 }
 
-function Pricing() {
-  const plans = [
-    { name: "Starter", price: "$99", desc: "One agent for solo consultants", features: ["1 AI agent", "500 tasks/month", "Email support", "Basic dashboard", "7-day activity history"], cta: "Start with Starter", href: "https://buy.stripe.com/6oUcN55Cz28j2e67ZibEA00", popular: false },
-    { name: "Professional", price: "$349", desc: "All 3 agents for growing firms", features: ["All 3 AI agents", "5,000 tasks/month", "Priority support", "Advanced dashboard", "30-day activity history", "Custom agent training", "API access"], cta: "Go Professional", href: "https://buy.stripe.com/14AfZh7KHbIT5qigvObEA01", popular: true },
-    { name: "Agency", price: "$799", desc: "Unlimited for large teams", features: ["Unlimited agents", "Unlimited tasks", "Dedicated support", "White-label option", "90-day activity history", "Custom integrations", "Team management", "SLA guarantee"], cta: "Contact Sales", href: "https://buy.stripe.com/6oUeVd8OLcMX8Cu0wQbEA02", popular: false },
-  ];
-  return (
-    <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto">
-        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">Simple, transparent pricing</h2>
-        <p className="text-lg text-slate-600 text-center mb-16 max-w-xl mx-auto">No setup fees. No contracts. Cancel anytime. Try all 3 agents free before you buy.</p>
-        <div className="grid md:grid-cols-3 gap-8">
-          {plans.map((plan) => (
-            <div key={plan.name} className={`rounded-2xl p-8 flex flex-col ${plan.popular ? "bg-gradient-to-b from-blue-600 to-violet-700 text-white shadow-2xl shadow-blue-500/30 scale-105 relative" : "bg-white border border-slate-200 shadow-sm"}`}>
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-amber-400 text-amber-900 text-xs font-bold rounded-full flex items-center gap-1">
-                  <Star className="w-3 h-3" />Most Popular
-                </div>
-              )}
-              <h3 className="text-xl font-bold mb-1">{plan.name}</h3>
-              <p className={`text-sm mb-4 ${plan.popular ? "text-blue-100" : "text-slate-500"}`}>{plan.desc}</p>
-              <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-4xl font-extrabold">{plan.price}</span>
-                <span className={`text-sm ${plan.popular ? "text-blue-200" : "text-slate-500"}`}>/month</span>
-              </div>
-              <ul className="space-y-3 mb-8 flex-1">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className={`w-4 h-4 shrink-0 ${plan.popular ? "text-blue-200" : "text-blue-500"}`} />{f}
-                  </li>
-                ))}
-              </ul>
-              <a href={plan.href} target="_blank" rel="noopener noreferrer" className={`block text-center py-3 px-6 rounded-xl font-semibold text-sm transition ${plan.popular ? "bg-white text-blue-700 hover:bg-blue-50" : "bg-slate-900 text-white hover:bg-slate-800"}`}>{plan.cta}</a>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function Comparison() {
   const rows = [
@@ -358,12 +317,7 @@ function Waitlist() {
           </a>
         </div>
         <p className="text-sm text-slate-500 mb-6">Or get notified about updates and launch discounts:</p>
-        <form action="/api/waitlist" method="POST" className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-          <input type="email" name="email" placeholder="you@yourfirm.com" required className="flex-1 px-4 py-3.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400" />
-          <button type="submit" className="px-6 py-3.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 transition flex items-center justify-center gap-2">
-            <Mail className="w-4 h-4" />Get Updates
-          </button>
-        </form>
+        <WaitlistForm />
         <p className="text-xs text-slate-400 mt-3">No spam. Unsubscribe anytime.</p>
       </div>
     </section>
@@ -448,6 +402,31 @@ function Footer() {
 }
 
 export default function Home() {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a,
+      },
+    })),
+  };
+
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "WEDGE Method LLC",
+    url: "https://thewedgemethodai.com",
+    contactPoint: {
+      "@type": "ContactPoint",
+      email: "jacob@thewedgemethodai.com",
+      contactType: "customer service",
+    },
+  };
+
   return (
     <>
       <Navbar />
@@ -458,11 +437,17 @@ export default function Home() {
         <LiveDemo />
         <Comparison />
         <HowItWorks />
-        <Pricing />
+        <PricingSection />
         <FAQ />
         <Waitlist />
       </main>
       <Footer />
+      <script type="application/ld+json">
+        {JSON.stringify(faqSchema)}
+      </script>
+      <script type="application/ld+json">
+        {JSON.stringify(orgSchema)}
+      </script>
     </>
   );
 }
